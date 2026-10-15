@@ -1,3 +1,3 @@
 # GlucoBridge
 
-Windows 포터블 exe 설정: `desktop` 폴더에서 `yarn build:portable`을 실행하면 `desktop/dist`에 생성됩니다.
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/taejeong1126/glucobridge&project-name=glucobridge&repository-name=glucobridge&env=CARESENS_SESSION_B64%2CCARESENS_ROUTE_SECRET)
