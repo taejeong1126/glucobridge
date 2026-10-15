@@ -1,0 +1,17 @@
+/node_modules/
+/.yarn/
+/.pnp/
+/.pnp.*
+/.next/
+/out/
+/build/
+/coverage/
+/.vercel/
+/next-env.d.ts
+*.tsbuildinfo
+/yarn.lock
+/skills-lock.json
+/.env*
+/.agents/
+/supabase/.branches/
+/supabase/.temp/
