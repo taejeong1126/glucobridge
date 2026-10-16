@@ -10,8 +10,6 @@
 
 </div>
 
----
-
 ## GlucoBridge 소개
 
 GlucoBridge는 CareSens 계정의 연속혈당측정(CGM) 데이터를 MCP를 지원하는 AI 도구에서 확인할 수 있도록 만든 서버입니다.
@@ -20,12 +18,10 @@ GlucoBridge는 CareSens 계정의 연속혈당측정(CGM) 데이터를 MCP를 �
 
 ## 시작하기
 
-**준비사항**: Windows PC, CareSens 계정, GitHub 계정
-
-GitHub 계정이 없다면 [GitHub 회원가입](https://github.com/signup)에서 먼저 가입해 주세요. Vercel은 배포 과정에서 GitHub 계정으로 가입하거나 로그인할 수 있습니다.
+GitHub 계정이 없다면 [GitHub 회원가입](https://github.com/signup)에서 먼저 가입해 주세요. Vercel은 배포 과정에서 GitHub 계정으로 로그인할 수 있습니다.
 
 1. [GitHub Releases](https://github.com/taejeong1126/glucobridge/releases)에서 최신 **CareSens Connect** 실행 파일을 다운로드해 Windows에서 실행합니다. `CareSens 로그인`을 눌러 로그인한 뒤 화면에 표시되는 `CARESENS_SESSION_B64`와 `CARESENS_ROUTE_SECRET`을 각각 복사해 둡니다.
-2. 위 **Deploy with Vercel** 버튼을 클릭합니다. 로그인 화면이 나오면 `Continue with GitHub`를 선택하고, GitHub 연결 권한을 요청하면 승인합니다.
+2. 문서 상단 **Deploy** 버튼을 클릭합니다. 로그인 화면이 나오면 `Continue with GitHub`를 선택하고, GitHub 연결 권한을 요청하면 승인합니다.
 3. GitHub 저장소 생성 화면에서 사용할 계정과 저장소 이름을 확인한 뒤 `Create`를 클릭합니다. 환경변수 입력 화면이 나타나면 `CARESENS_SESSION_B64`와 `CARESENS_ROUTE_SECRET`에 앞서 복사한 값을 넣고 `Deploy`를 클릭합니다.
 4. 배포가 완료되면 [Vercel 대시보드](https://vercel.com/dashboard)에서 `glucobridge` 프로젝트를 엽니다. `Settings` → `Domains`에서 `glucobridge-xxx.vercel.app`과 같은 배포 주소를 확인할 수 있습니다.
 5. 아래 형식으로 MCP 주소를 만들어 사용하는 AI 도구에 등록합니다.
@@ -80,12 +76,21 @@ cp .env.example .env.local
 
 ## 기여하기
 
-버그 제보, 개선 아이디어, 기능 제안, 문서 수정 및 코드 기여는 GitHub Issues 또는 Pull Request를 통해 자유롭게 참여해 주세요.
+GlucoBridge는 GPL-3.0 라이선스를 따르는 오픈소스 프로젝트이며, 모든 기여를 환영합니다.
+
+버그 제보, 개선 아이디어, 기능 제안, 문서 수정, 코드 개선 등 모든 형태의 기여를 환영합니다.
+GitHub Issues 또는 Pull Request를 통해 자유롭게 참여해 주세요.
 
 개인적인 문의는 `taejeong654@gmail.com`으로 연락해 주세요.
 
 - Issues: [GitHub Issues](https://github.com/taejeong1126/glucobridge/issues)
 - Pull Requests: [GitHub Pull Requests](https://github.com/taejeong1126/glucobridge/pulls)
+
+## 라이선스
+
+GlucoLabs Plus는 **GNU General Public License v3.0**에 따라 배포됩니다.
+
+라이선스 전문은 [LICENSE](./LICENSE) 파일에서 확인할 수 있습니다.
 
 ## 면책 조항
 
