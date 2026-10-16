@@ -67,6 +67,7 @@ async function tokenRequest(endpoint, form) {
     if (!response.ok) throw Error(`OAuth token exchange HTTP ${response.status}`);
     const tokens = await response.json();
     if (!tokens.access_token) throw Error('No access_token in response');
+    if (!tokens.refresh_token) throw Error('No refresh_token in response; offline access is required');
     return tokens;
 }
 export async function finishLogin(callbackUrl, pending) {

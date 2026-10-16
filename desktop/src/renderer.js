@@ -1,25 +1,16 @@
 const byId = (id) => document.getElementById(id);
 
 function showError(error) {
-    byId('error').textContent = '오류: ' + error.message;
+    byId('error').textContent = `오류: ${error.message}`;
     byId('error').hidden = false;
 }
 
-async function showConfig() {
-    const values = await window.care.getConfig();
-    byId('session-value').value = values.CARESENS_SESSION_B64;
-    byId('secret-value').value = values.CARESENS_ROUTE_SECRET;
-    byId('login-screen').hidden = true;
-    byId('config-screen').hidden = false;
-    byId('error').hidden = true;
-    byId('notice').textContent = '각 값을 복사해 Vercel에 등록하세요.';
-}
-
-async function copyValue(name, button, message) {
+async function copyValue(name, button) {
     button.disabled = true;
     try {
         await window.care.copyConfigValue(name);
-        byId('notice').textContent = message;
+        byId('notice').textContent = `${name} 값이 클립보드에 복사되었습니다.`;
+        byId('error').hidden = true;
     } catch (error) {
         showError(error);
     } finally {
@@ -28,20 +19,26 @@ async function copyValue(name, button, message) {
 }
 
 byId('login').onclick = async () => {
-    const button = byId('login');
-    button.disabled = true;
+    byId('login').disabled = true;
+    byId('error').hidden = true;
     try {
         await window.care.login();
     } catch (error) {
+        byId('login').disabled = false;
         showError(error);
-    } finally {
-        button.disabled = false;
     }
 };
 
-byId('copy-session').onclick = () => copyValue('CARESENS_SESSION_B64', byId('copy-session'), '세션 값을 복사했습니다.');
-byId('copy-secret').onclick = () => copyValue('CARESENS_ROUTE_SECRET', byId('copy-secret'), '비밀키를 복사했습니다.');
+byId('copy-session').onclick = () => copyValue('CARESENS_SESSION_B64', byId('copy-session'));
+byId('copy-secret').onclick = () => copyValue('CARESENS_ROUTE_SECRET', byId('copy-secret'));
+
 window.care.onLoginResult((result) => {
-    if (result.ok) showConfig().catch(showError);
-    else showError(new Error(result.error));
+    byId('login').disabled = false;
+    if (result.ok) {
+        byId('login-screen').hidden = true;
+        byId('config-screen').hidden = false;
+        byId('error').hidden = true;
+    } else if (!result.cancelled) {
+        showError(new Error(result.error || '로그인에 실패했습니다.'));
+    }
 });
