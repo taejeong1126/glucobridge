@@ -8,9 +8,10 @@ export const CONFIG = {
     timeoutMs: 15_000,
     historyTimeoutMs: 25_000,
     refreshLeewayMs: 60_000,
-    maxLatestChars: 1_000_000,
+    maxLatestBytes: 1 * 1024 * 1024,
+    maxDevicesBytes: 1 * 1024 * 1024,
     maxHistoryBytes: 48 * 1024 * 1024,
-    maxHistoryScanMs: 19_000
+    maxHistoryScanMs: 45_000
 } as const;
 
 export function isRecord(input: unknown): input is Record<string, unknown> {
@@ -28,19 +29,24 @@ export type HistoryQuery = Required<HistoryOptions>;
 export interface GlucoseReading {
     glucose_value: number;
     measured_at: string | null;
+    unit?: 'mg/dL' | 'mmol/L';
 }
 
 export interface GlucoseLookupResult {
     data: unknown;
+    /** True if the entire upstream history response was consumed. */
     history_complete?: boolean;
+    /** All matched readings, retained internally for optional day caching. */
 }
 
 export interface GlucoseSummary {
     candidate_count: number;
-    unit: string;
     glucose_value?: number;
     measured_at?: string | null;
+    unit?: 'mg/dL' | 'mmol/L';
     measurements?: GlucoseReading[];
+    /** Only emitted when the upstream history scan stopped early. */
+    partial?: true;
     message?: string;
 }
 

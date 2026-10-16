@@ -3,7 +3,7 @@ import { timingSafeEqual } from 'node:crypto';
 import { createMcpHandler } from 'mcp-handler';
 import { z } from 'zod';
 
-import { glucoseLookup, type HistoryOptions, safeGlucoseSummary } from '@/lib/caresens';
+import { glucoseLookup, glucoseStatistics, type HistoryOptions, safeGlucoseSummary, summarizeStatistics } from '@/lib/caresens';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -22,7 +22,7 @@ const handler = createMcpHandler((server) => {
     server.registerTool(
         'caresens_get_latest_glucose',
         {
-            description: 'Retrieve latest CareSens glucose; include event_at timestamp if returned. Do not infer units when absent.',
+            description: 'Get the latest CareSens glucose measurement. Unit is included only when provided by CareSens; do not infer one.',
             inputSchema: z.object({ producer_id: z.string().min(1).optional() })
         },
         async ({ producer_id }) => lookupResponse('latest', producer_id)
@@ -31,7 +31,7 @@ const handler = createMcpHandler((server) => {
         'caresens_get_glucose_history',
         {
             description:
-                'Retrieve up to 24 hours of glucose history (default 3 hours). start_time/end_time are ISO 8601 and limit defaults to 12; The tool streams large upstream responses and filters records locally; results may be incomplete if the upstream scan hits resource limits.',
+                'Get up to 7 days of CareSens history (default 3 hours, default limit 12). ISO 8601 timestamps must include Z or an offset. The response has partial=true when scanning stopped early; do not treat partial data as complete.',
             inputSchema: z.object({
                 producer_id: z.string().min(1).optional(),
                 start_time: z.string().optional(),
@@ -40,6 +40,33 @@ const handler = createMcpHandler((server) => {
             })
         },
         async ({ producer_id, start_time, end_time, limit }) => lookupResponse('history', producer_id, { start_time, end_time, limit })
+    );
+    server.registerTool(
+        'caresens_get_glucose_statistics',
+        {
+            description:
+                'Calculate CareSens glucose statistics for up to 90 days (default 7 days). Older complete UTC days are cached for 7 days; the latest three hours are never cached. Statistics are calculated from returned CGM samples, and completeness must be checked.',
+            inputSchema: z.object({
+                producer_id: z.string().min(1).optional(),
+                start_time: z.string().optional(),
+                end_time: z.string().optional()
+            })
+        },
+        async ({ producer_id, start_time, end_time }) => {
+            try {
+                const result = await glucoseStatistics(producer_id, { start_time, end_time });
+                return {
+                    content: [
+                        {
+                            type: 'text' as const,
+                            text: JSON.stringify(summarizeStatistics(result.readings, result.start_time, result.end_time, result.complete))
+                        }
+                    ]
+                };
+            } catch (error) {
+                return { isError: true, content: [{ type: 'text' as const, text: error instanceof Error ? error.message : 'Statistics lookup failed' }] };
+            }
+        }
     );
 });
 
